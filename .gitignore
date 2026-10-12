@@ -1,0 +1,28 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & temp test logs
+logs/
+logs_test/
+*.log
+
+# Environments & secrets
+.env
+
+# Editor & OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
