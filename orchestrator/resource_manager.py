@@ -77,11 +77,6 @@ class ResourceManager:
             for name in req.exclusive_resources:
                 self._exclusive_holders[name] = None
 
-            for api, tokens in req.api_rate_tokens.items():
-                max_tokens = self._pool.api_rate_limits.get(api, tokens)
-                self._api_tokens[api] = min(
-                    self._api_tokens.get(api, 0) + tokens, max_tokens
-                )
             callbacks = list(self._release_callbacks)
 
         self._bus.publish(Event(
