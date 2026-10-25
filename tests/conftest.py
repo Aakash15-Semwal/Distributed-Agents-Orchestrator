@@ -6,7 +6,10 @@ from pathlib import Path
 
 import pytest
 
+from agents.fake_api_agent import fake_api_agent
 from agents.fake_cpu_agent import fake_cpu_agent
+from agents.fake_gpu_agent import fake_gpu_agent
+from agents.fake_io_agent import fake_io_agent
 from orchestrator import Orchestrator, ResourcePool
 
 
@@ -21,9 +24,33 @@ def cpu_pool() -> ResourcePool:
 
 
 @pytest.fixture
+def full_pool() -> ResourcePool:
+    return ResourcePool(
+        total_cpu_cores=8.0,
+        total_gpu_memory_gb=16.0,
+        exclusive_resources=["output.csv", "db_writer"],
+        api_rate_limits={"openai": 2, "claude": 1},
+    )
+
+
+@pytest.fixture
 def orchestrator(cpu_pool, tmp_path) -> Orchestrator:
     orc = Orchestrator(pool=cpu_pool, log_dir=tmp_path / "logs")
     orc.register_agent("cpu_agent", fake_cpu_agent)
+    orc.start()
+
+    yield orc
+
+    orc.stop()
+
+
+@pytest.fixture
+def full_orchestrator(full_pool, tmp_path) -> Orchestrator:
+    orc = Orchestrator(pool=full_pool, log_dir=tmp_path / "logs")
+    orc.register_agent("cpu_agent", fake_cpu_agent)
+    orc.register_agent("gpu_agent", fake_gpu_agent)
+    orc.register_agent("io_agent", fake_io_agent)
+    orc.register_agent("api_agent", fake_api_agent)
     orc.start()
 
     yield orc
@@ -77,3 +104,14 @@ def log_reader(orchestrator) -> LogReader:
         time.sleep(0.05)
 
     return LogReader(orchestrator.log_file)
+
+
+@pytest.fixture
+def full_log_reader(full_orchestrator) -> LogReader:
+    deadline = time.monotonic() + 5.0
+    while full_orchestrator.log_file is None:
+        if time.monotonic() > deadline:
+            raise RuntimeError("Orchestrator log file was not created within 5s")
+        time.sleep(0.05)
+
+    return LogReader(full_orchestrator.log_file)
