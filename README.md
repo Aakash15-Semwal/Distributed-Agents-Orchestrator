@@ -87,7 +87,7 @@ Distributed Agents Orchestrator/
 
 1. **Clone the repository:**
    ```powershell
-   git clone https://github.com/<your-username>/Distributed-Agents-Orchestrator.git
+   git clone https://github.com/Aakash15-Semwal/Distributed-Agents-Orchestrator.git
    cd "Distributed Agents Orchestrator"
    ```
 
