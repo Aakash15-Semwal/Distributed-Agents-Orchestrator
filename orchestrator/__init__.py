@@ -1,4 +1,5 @@
 from .core import Orchestrator
+from .dashboard import Dashboard
 from .event_bus import Event, EventBus, EventType
 from .exceptions import (
     AgentNotFoundError,
@@ -12,6 +13,7 @@ from .task import ResourcePool, ResourceRequirements, Task, TaskAttempt
 
 __all__ = [
     "Orchestrator",
+    "Dashboard",
     "Task",
     "TaskAttempt",
     "ResourceRequirements",
